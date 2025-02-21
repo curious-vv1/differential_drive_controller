@@ -117,17 +117,17 @@ class WaypointNavigator(Node):
         time.sleep(1)
         
         twist_msg = Twist()
-        twist_msg.angular.z = 0.5  # Rotate left to avoid
+        twist_msg.angular.z = 0.5  
         self.vel_publisher.publish(twist_msg)
         self.get_logger().info("Turning left to avoid obstacle.")
         
-        time.sleep(2)  # Rotate for 2 seconds
+        time.sleep(2)  
         
         twist_msg.angular.z = 0.0
-        twist_msg.linear.x = 0.2  # Move forward to bypass obstacle
+        twist_msg.linear.x = 0.2  
         self.vel_publisher.publish(twist_msg)
         
-        time.sleep(3)  # Move past obstacle
+        time.sleep(3)  
         
         self.get_logger().info("Resuming waypoint navigation.")
 

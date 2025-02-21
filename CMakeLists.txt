@@ -8,6 +8,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
+find_package(rclpy REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 find_package(nav_msgs REQUIRED)
@@ -28,15 +29,22 @@ if(BUILD_TESTING)
 endif()
 
 add_executable(rpm src/diff_drive_control.cpp)
-ament_target_dependencies(rpm rclcpp std_msgs geometry_msgs) 
+ament_target_dependencies(rpm rclcpp std_msgs geometry_msgs)
 
 install(TARGETS
   rpm
-  DESTINATION lib/${PROJECT_NAME})
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  PROGRAMS src/waypoint_navigation.py
+  DESTINATION lib/${PROJECT_NAME}
+)
 
 install(
   DIRECTORY src launch description
   DESTINATION share/${PROJECT_NAME}
 )
+
 
 ament_package()

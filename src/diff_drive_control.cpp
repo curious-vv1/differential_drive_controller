@@ -14,6 +14,10 @@ public:
         // Set parameters
         this->declare_parameter("wheel_radius", 0.05);  // meters
         this->declare_parameter("wheel_base", 0.35);  // meters
+
+        double wheel_radius = this->get_parameter("wheel_radius").as_double();
+        double wheel_base = this->get_parameter("wheel_base").as_double();
+        RCLCPP_INFO(this->get_logger(),"Publishing left wheel RPM and right wheel RPM. Wheel Base: %.2f, Wheel Radius: %.2f", wheel_base, wheel_radius);
     }
 
 private:
@@ -21,6 +25,7 @@ private:
         double wheel_radius = this->get_parameter("wheel_radius").as_double();
         double wheel_base = this->get_parameter("wheel_base").as_double();
 
+        
         double Vx = msg->linear.x;
         double omega = msg->angular.z;
 

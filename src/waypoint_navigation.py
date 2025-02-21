@@ -134,7 +134,7 @@ class WaypointNavigator(Node):
     def stop_robot(self):
         stop_msg = Twist()
         self.vel_publisher.publish(stop_msg)
-        self.get_logger().info("Robot reached all waypoints and stopped.")
+        
 
 
 def main(args=None):

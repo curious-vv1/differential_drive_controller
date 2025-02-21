@@ -4,6 +4,10 @@ This is a ROS humble and Gazebo Classic package which contains:
 - Obstacle avoidance using lidar
 - Working demonstration in Gazebo
 
+## Following is a demo video showing waypoint navigation
+
+Drive Link:- https://drive.google.com/file/d/1PFR9V--mucsstYXugDUwDcRx7oSW2oQ6/view?usp=sharing
+
 # Setup Instructions
 
 Make a workspace and src folder. In the src folder clone this repo using command   

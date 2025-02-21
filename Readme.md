@@ -6,7 +6,7 @@ This is a ROS humble and Gazebo Classic package which contains:
 
 ## Following is a demo video showing waypoint navigation
 
-Drive Link:- https://drive.google.com/file/d/1PFR9V--mucsstYXugDUwDcRx7oSW2oQ6/view?usp=sharing
+Drive Link:- https://drive.google.com/file/d/1KaULYLYP187b6dUsUW_N4ZxpIEgVyBF1/view?usp=sharing
 
 # Setup Instructions
 

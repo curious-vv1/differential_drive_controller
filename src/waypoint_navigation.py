@@ -4,7 +4,9 @@ import rclpy
 from rclpy.node import Node
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
+from sensor_msgs.msg import LaserScan
 import math
+import time
 
 class PIDController:
     def __init__(self, kp, ki, kd):
@@ -49,12 +51,15 @@ class WaypointNavigator(Node):
         self.pid_angular = PIDController(2.0 * self.get_parameter('kp').value, 0.0, 0.0)
 
         self.odom_subscriber = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.lidar_subscriber = self.create_subscription(LaserScan, '/scan', self.lidar_callback, 10)
         self.vel_publisher = self.create_publisher(Twist, '/cmd_vel', 10)
         self.timer = self.create_timer(0.1, self.update_navigation)
         
         self.position = [0.0, 0.0]
         self.yaw = 0.0
         self.reached_goal = False
+        self.obstacle_detected = False
+        self.safe_distance = 0.9
         self.get_logger().info("Robot waypoint navigation started.")
 
 
@@ -65,6 +70,10 @@ class WaypointNavigator(Node):
         cosy_cosp = 1 - 2 * (q.y * q.y + q.z * q.z)
         self.yaw = math.atan2(siny_cosp, cosy_cosp)
 
+    def lidar_callback(self, msg):
+        min_distance = min(msg.ranges)
+        self.obstacle_detected = min_distance < self.safe_distance
+
 
     def update_navigation(self):
         if self.reached_goal:
@@ -73,6 +82,10 @@ class WaypointNavigator(Node):
         if self.current_waypoint_index >= len(self.waypoints):
             self.stop_robot()
             self.reached_goal = True
+            return
+        
+        if self.obstacle_detected:
+            self.avoid_obstacle()
             return
         
         target_x, target_y = self.waypoints[self.current_waypoint_index]
@@ -97,6 +110,26 @@ class WaypointNavigator(Node):
         twist_msg.linear.x = max(min(linear_speed, 0.2), -0.2)
         twist_msg.angular.z = max(min(angular_speed, 1.0), -1.0)
         self.vel_publisher.publish(twist_msg)
+
+    def avoid_obstacle(self):
+        self.get_logger().info("Obstacle detected! Stopping.")
+        self.stop_robot()
+        time.sleep(1)
+        
+        twist_msg = Twist()
+        twist_msg.angular.z = 0.5  # Rotate left to avoid
+        self.vel_publisher.publish(twist_msg)
+        self.get_logger().info("Turning left to avoid obstacle.")
+        
+        time.sleep(2)  # Rotate for 2 seconds
+        
+        twist_msg.angular.z = 0.0
+        twist_msg.linear.x = 0.2  # Move forward to bypass obstacle
+        self.vel_publisher.publish(twist_msg)
+        
+        time.sleep(3)  # Move past obstacle
+        
+        self.get_logger().info("Resuming waypoint navigation.")
 
     def stop_robot(self):
         stop_msg = Twist()
